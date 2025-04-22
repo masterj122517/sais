@@ -1,0 +1,16 @@
+model:
+    o_dim: 2  # 分类数量，保留
+
+data:
+    data_path: '../data/WSAA_data_public.pkl'  # 数据集路径
+
+train:
+    epochs: 5  # 推荐先从较小轮次测试
+    dataloader:
+        batch_size: 1
+        shuffle: True
+        num_workers: 4
+        drop_last: True
+    optimizer:
+        lr: 2e-5  # 小学习率适合预训练模型微调
+        weight_decay: 0.01
