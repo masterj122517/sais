@@ -94,7 +94,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     config = OmegaConf.load(args.config_path)
 
-    tokenizer = BertTokenizer.from_pretrained("Rostlab/prot_bert", do_lower_case=False)
+    # tokenizer = BertTokenizer.from_pretrained("Rostlab/prot_bert", do_lower_case=False)
+    tokenizer = BertTokenizer.from_pretrained("./prot_bert", do_lower_case=False)
 
     train_dataset, valid_dataset, test_dataset = make_dataset(config.data, tokenizer)
     train_dataloader = DataLoader(dataset=train_dataset, **config.train.dataloader)
