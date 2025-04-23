@@ -41,9 +41,7 @@ class DisProtDataset(Dataset):
 class DisProtModel(nn.Module):
     def __init__(self, model_config):
         super().__init__()
-        self.bert = BertModel.from_pretrained(
-            "Rostlab/prot_bert", output_hidden_states=False
-        )
+        self.bert = BertModel.from_pretrained("./prot_bert", output_hidden_states=False)
         self.dropout = nn.Dropout(p=0.1)
         self.classifier = nn.Linear(self.bert.config.hidden_size, model_config.o_dim)
 
