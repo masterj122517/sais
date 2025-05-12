@@ -1,4 +1,3 @@
-# let's write a 词嵌入模型
 import argparse
 import math
 import pickle
@@ -63,8 +62,20 @@ def make_dataset(data_config, train_rate=0.7, valid_rate=0.2):
 
 class DisProtDataset(Dataset):
     def __init__(self, dict_data):
-        sequences = [d["sequence"] for d in dict_data]
-        labels = [d["label"] for d in dict_data]
+        sequences = []
+        labels = []
+
+        for d in dict_data:
+            if "sequence" not in d:
+                # print(f"Missing 'sequence' key in data: {d}")
+                continue  # Skip invalid data
+            if "label" not in d:
+                # print(f"Missing 'label' key in data: {d}")
+                continue  # Skip invalid data
+
+            sequences.append(d["sequence"])
+            labels.append(d["label"])
+
         assert len(sequences) == len(labels)
 
         self.sequences = sequences
@@ -81,7 +92,7 @@ class DisProtDataset(Dataset):
 
 
 class PositionalEncoding(nn.Module):
-    def __init__(self, d_model, dropout=0.0, max_len=20000):
+    def __init__(self, d_model, dropout=0.0, max_len=40000):
         super().__init__()
         position = torch.arange(max_len).unsqueeze(1)
         div_term = torch.exp(
@@ -110,7 +121,7 @@ class DisProtModel(nn.Module):
         self.vocab_size = len(restypes)
 
         self.embedding = nn.Embedding(self.vocab_size, model_config.d_model)
-        self.position_embed = PositionalEncoding(self.d_model, max_len=20000)
+        self.position_embed = PositionalEncoding(self.d_model, max_len=40000)
         self.input_norm = nn.LayerNorm(self.d_model)
         self.dropout_in = nn.Dropout(p=0.1)
 

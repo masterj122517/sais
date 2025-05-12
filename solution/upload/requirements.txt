@@ -1,5 +1,0 @@
-gensim==4.3.3
-joblib
-numpy
-pandas
-scikit_learn
