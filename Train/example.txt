@@ -1,0 +1,28 @@
+
+{'id': 'disordered_protein_0',
+ 'sequence': 'MKQFGLAAFDELKDGKYNDVNKTILEKQSVELRDQLMVFQERLVEFAKKHNSELQASPEFRSKFMHMCSSIGIDPLSLFDRDKHLFTVNDFYYEVCLKVIEICRQTKDMNGGVISFQELEKVHFRKLNVGLDDLEKSIDMLKSLECFEIFQIRGKKFLRSVPNELTSDQTKILEICSILGYSSISLLKANLGWEAVRSKSALDEMVANGLLWIDYQGGAEALYWDPSWITRQL',
+ 'label': array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])}
+
+测试数据示例： {'id': 'disordered_protein_test_156', 'sequence': 'MLWQKPTAPEQAPAPARPYQGVRVKEPVKELLRRKRGHASSGAAPAPTAVVLPHQPLATYTTVGPSCLDMEGSVSAVTEEAALCAGWLSQPTPATLQPLAPWTPYTEYVPHEAVSCPYSADMYVQPVCPSYTVVGPSSVLTYASPPLITNVTTRSSATPAVGPPLEGPEHQAPLTYFPWPQPLSTLPTSTLQYQPPAPALPGPQFVQLPISIPEPVLQDMEDPRRAASSLTIDKLLLEEEDSDAYALNHTLSVEGF'}
+结果示例：                      proteinID  ...                                               IDRs
+0  disordered_protein_test_156  ...  0000000000000000000000000000000000000000000000...
+1   disordered_protein_test_60  ...  0111110110011001110111010111000111110101101111...
+2   disordered_protein_test_32  ...  0000000000000000000000000000000000000000000000...
+3   disordered_protein_test_14  ...  0000000000000000001001000010000100000000100001...
+4  disordered_protein_test_101  ...  0001101000010011011100001110001110110100000010...
+
+选手可以参考主办方提供的submit.csv示例文件：
+
+proteinID,sequence,IDRs
+disprot1,XXXXXX,110011
+disprot2,XXXXXX,100001

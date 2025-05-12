@@ -1,0 +1,21 @@
+residue_types: 21  # 可以保留，用于定义 embedding 的词表大小
+
+model:
+    o_dim: 2         # 输出维度（比如 binary 分类）
+    d_model: 64      # embedding 输出维度（和 transformer 模型维度）
+    n_head: 2
+    n_layer: 2
+
+data:
+    data_path: './saisdata/WSAA_data_public.pkl'
+
+train:
+    epochs: 20
+    dataloader:
+        batch_size: 1
+        shuffle: True
+        num_workers: 16
+        drop_last: True
+    optimizer:
+        lr: 2e-4
+        weight_decay: 1e-4
