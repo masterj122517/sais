@@ -81,30 +81,62 @@ class DisProtModel(torch.nn.Module):
         self.n_layer = model_config.n_layer
         self.vocab_size = len(restypes)
 
+        # 改进的embedding层
         self.embedding = torch.nn.Embedding(self.vocab_size, model_config.d_model)
-        self.position_embed = PositionalEncoding(self.d_model, max_len=40000)
+        self.embedding_dropout = torch.nn.Dropout(p=0.2)  # 增加dropout率
+        
+        # 添加LayerNorm
+        self.embedding_norm = torch.nn.LayerNorm(self.d_model)
+        
+        self.position_embed = PositionalEncoding(
+            self.d_model, dropout=0.1, max_len=40000
+        )
         self.input_norm = torch.nn.LayerNorm(self.d_model)
-        self.dropout_in = torch.nn.Dropout(p=0.1)
+        self.dropout_in = torch.nn.Dropout(p=0.2)  # 增加dropout率
 
+        # 改进的transformer配置
         encoder_layer = torch.nn.TransformerEncoderLayer(
-            d_model=self.d_model, nhead=self.n_head, activation="gelu", batch_first=True
+            d_model=self.d_model,
+            nhead=self.n_head,
+            dim_feedforward=self.d_model * 4,
+            dropout=0.2,  # 增加dropout率
+            activation="gelu",
+            batch_first=True,
+            norm_first=True,
+            # 添加额外的参数
+            layer_norm_eps=1e-6,
         )
         self.transformer = torch.nn.TransformerEncoder(
             encoder_layer, num_layers=self.n_layer
         )
+        
+        # 改进的输出层
         self.output_layer = torch.nn.Sequential(
-            torch.nn.Linear(self.d_model, self.d_model),
+            torch.nn.Linear(self.d_model, self.d_model * 2),
+            torch.nn.LayerNorm(self.d_model * 2),  # 添加LayerNorm
             torch.nn.GELU(),
-            torch.nn.Dropout(p=0.1),
+            torch.nn.Dropout(p=0.2),  # 增加dropout率
+            torch.nn.Linear(self.d_model * 2, self.d_model),
+            torch.nn.LayerNorm(self.d_model),  # 添加LayerNorm
+            torch.nn.GELU(),
+            torch.nn.Dropout(p=0.2),  # 增加dropout率
             torch.nn.Linear(self.d_model, model_config.o_dim),
         )
 
     def forward(self, x):
+        # 改进的前向传播
         x = self.embedding(x)
+        x = self.embedding_norm(x)  # 添加LayerNorm
+        x = self.embedding_dropout(x)
         x = self.position_embed(x)
         x = self.input_norm(x)
         x = self.dropout_in(x)
+        
+        # 添加残差连接
+        residual = x
         x = self.transformer(x)
+        x = x + residual
+        
         x = self.output_layer(x)
         return x
 
@@ -133,7 +165,7 @@ def predict():
 
     # 加载测试数据
     test_dataset = load_test_data("/saisdata/WSAA_data_test.pkl")
-    test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=config.train.dataloader.batch_size, shuffle=False)
 
     results = []
     with torch.no_grad():  # 禁用梯度计算
@@ -141,29 +173,23 @@ def predict():
             sequence = sequence.to(device)  # 将数据转移到设备上
             pred = model(sequence)  # 模型预测
 
-            # 获取预测结果并转为列表
-            pred_label = torch.argmax(pred, dim=-1).squeeze().cpu().numpy().tolist()
-
-            # 确保输出格式正确
-            if isinstance(pred_label, int):
-                pred_label = [pred_label]  # 如果是单个值，转为列表
-
-            # 将预测标签转换为字符串
-            idrs_str = "".join(str(i) for i in pred_label)
-
-            # 获取原始序列
-            original_sequence = test_dataset.sequences[
-                len(results)
-            ]  # 使用索引获取原始序列
-
-            # 添加结果，使用原始序列
-            results.append(
-                {
-                    "proteinID": protein_id[0],  # 使用原始proteinID
-                    "sequence": original_sequence,  # 使用原始序列
+            # 获取预测结果
+            pred_label = torch.argmax(pred, dim=-1).cpu().numpy()
+            
+            # 处理每个样本的预测结果
+            for i in range(len(protein_id)):
+                # 将预测标签转换为字符串
+                idrs_str = "".join(str(int(x)) for x in pred_label[i])
+                
+                # 获取原始序列
+                original_sequence = test_dataset.sequences[len(results)]
+                
+                # 添加结果
+                results.append({
+                    "proteinID": protein_id[i],
+                    "sequence": original_sequence,
                     "IDRs": idrs_str,
-                }
-            )
+                })
 
     # 创建保存结果的文件夹
     os.makedirs("/saisresult", exist_ok=True)
